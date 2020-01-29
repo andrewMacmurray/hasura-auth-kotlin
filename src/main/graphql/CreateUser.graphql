@@ -1,0 +1,23 @@
+mutation CreateUser(
+    $email: String!,
+    $username: String!,
+    $firstName: String!,
+    $secondName: String!,
+    $passwordHash: String!
+) {
+    insert_users(objects: [
+        {
+            email: $email,
+            first_name: $firstName,
+            password_hash: $passwordHash,
+            second_name: $secondName,
+            username: $username
+        }
+    ]) {
+        returning {
+            id,
+            username,
+            email
+        }
+    }
+}
