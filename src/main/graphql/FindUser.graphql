@@ -1,0 +1,10 @@
+query FindUser($username: String!) {
+    users(where: {username: {_eq: $username}}) {
+        email
+        first_name
+        id
+        password_hash
+        second_name
+        username
+    }
+}

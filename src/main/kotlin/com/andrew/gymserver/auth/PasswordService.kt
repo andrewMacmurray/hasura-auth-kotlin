@@ -6,8 +6,8 @@ import com.andrew.gymserver.utils.Result
 import com.andrew.gymserver.utils.nullableToResult
 import org.mindrot.jbcrypt.BCrypt
 
-
 // PasswordService
+
 
 interface PasswordService {
     fun hash(password: String): Result<String, PasswordError>
@@ -38,7 +38,6 @@ object BCryptService : PasswordService {
     private fun String.matchesHash(hash: String): Boolean =
         BCrypt.checkpw(this, hash)
 }
-
 
 private object PasswordCriteria {
     private const val hasLowerCase = "(?=.*[a-z])"
