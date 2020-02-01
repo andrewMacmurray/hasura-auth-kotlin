@@ -31,10 +31,6 @@ object Client {
             .pipe { it.newBuilder().method(it.method(), it.body()) }
             .pipe { it.header("x-hasura-admin-secret", "ilovebread") }
             .pipe { chain.proceed(it.build()) }
-//        val original = chain.request()
-//        val builder = original.newBuilder().method(original.method(), original.body())
-//        builder.header("x-hasura-admin-secret", "ilovebread")
-//        return chain.proceed(builder.build())
 }
 
 suspend fun <T> ApolloCall<T>.execute() =

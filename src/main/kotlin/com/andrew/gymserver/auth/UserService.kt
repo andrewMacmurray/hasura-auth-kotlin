@@ -4,8 +4,6 @@ import com.andrew.gymserver.auth.WorkflowError.HashPasswordError
 import com.andrew.gymserver.auth.WorkflowError.TokenGenerationError
 import com.andrew.gymserver.auth.WorkflowError.UserCreationError
 import com.andrew.gymserver.utils.Result
-import com.andrew.gymserver.utils.andThen
-import com.andrew.gymserver.utils.map
 import com.andrew.gymserver.utils.mapError
 
 data class CreateUserDetails(
@@ -27,11 +25,12 @@ class UserService(
     private val tokenService: TokenService,
     private val usersRepository: UsersRepository
 ) {
-    fun signUp(signUpRequest: SignUpRequest): Result<Token, WorkflowError> {
-        return hashPassword(signUpRequest)
-            .map { hash -> createUserDetails(signUpRequest, hash) }
-            .andThen(this::createUser)
-            .andThen(this::generateToken)
+    suspend fun signUp(signUpRequest: SignUpRequest): Result<Token, WorkflowError> {
+        return Result.Error(UserCreationError)
+//        return hashPassword(signUpRequest)
+//            .map { hash -> createUserDetails(signUpRequest, hash) }
+//            .andThen { createUser(it) }
+//            .andThen { generateToken(it) }
     }
 
     private fun hashPassword(signUpRequest: SignUpRequest): Result<String, WorkflowError> =
@@ -40,7 +39,7 @@ class UserService(
     private fun generateToken(userDetails: UserDetails): Result<Token, WorkflowError> =
         tokenService.generate(userDetails).mapError { TokenGenerationError }
 
-    private fun createUser(createUserDetails: CreateUserDetails): Result<UserDetails, WorkflowError> =
+    private suspend fun createUser(createUserDetails: CreateUserDetails): Result<UserDetails, WorkflowError> =
         usersRepository.create(createUserDetails).mapError { UserCreationError }
 }
 

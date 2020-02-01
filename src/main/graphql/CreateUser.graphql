@@ -14,6 +14,10 @@ mutation CreateUser(
             username: $username
         }
     ]) {
-        affected_rows
+        returning {
+            id,
+            username,
+            email
+        }
     }
 }
