@@ -7,6 +7,7 @@ import com.andrew.gymserver.graphql.GymRepository
 import com.andrew.gymserver.utils.Result
 import com.andrew.gymserver.utils.nullableToResult
 import com.andrew.gymserver.utils.pipe
+import org.springframework.stereotype.Component
 
 
 // UsersRepository
@@ -17,6 +18,7 @@ interface UsersRepository {
 
 // GraphQL Users
 
+@Component
 object GraphQLUsers : UsersRepository {
     override suspend fun create(createUserDetails: CreateUserDetails): Result<UserDetails, UsersError> {
         return createAUser(createUserDetails).nullableToResult(CreateUserError)

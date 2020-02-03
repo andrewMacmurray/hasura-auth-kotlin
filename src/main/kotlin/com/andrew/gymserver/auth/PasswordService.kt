@@ -5,6 +5,7 @@ import com.andrew.gymserver.auth.PasswordError.PasswordCreationError
 import com.andrew.gymserver.utils.Result
 import com.andrew.gymserver.utils.nullableToResult
 import org.mindrot.jbcrypt.BCrypt
+import org.springframework.stereotype.Component
 
 // PasswordService
 
@@ -16,6 +17,7 @@ interface PasswordService {
 
 // BCrypt Service
 
+@Component
 object BCryptService : PasswordService {
     override fun hash(password: String): Result<String, PasswordError> =
         if (password.meetsCriteria())

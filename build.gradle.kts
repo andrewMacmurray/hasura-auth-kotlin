@@ -6,6 +6,7 @@ plugins {
     id("com.apollographql.apollo") version "1.3.0"
     kotlin("jvm") version "1.3.61"
     kotlin("plugin.spring") version "1.3.61"
+    kotlin("kapt") version "1.3.61"
 }
 
 group = "com.andrew"
@@ -21,10 +22,14 @@ apollo {
     generateKotlinModels.set(true)
 }
 
+val arrowVersion = "0.10.4"
 dependencies {
 //    implementation("com.graphql-java:graphql-java-spring-boot-starter-webflux:1.0")
 //    implementation("com.graphql-java:graphiql-spring-boot-starter:5.0.2")
 //    implementation("com.graphql-java:graphql-java-tools:5.2.4")
+    implementation("io.arrow-kt:arrow-fx:$arrowVersion")
+    implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
+    kapt("io.arrow-kt:arrow-meta:$arrowVersion")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

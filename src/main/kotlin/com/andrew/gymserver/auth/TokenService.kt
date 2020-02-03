@@ -10,6 +10,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTCreationException
 import com.auth0.jwt.exceptions.JWTDecodeException
 import com.auth0.jwt.interfaces.DecodedJWT
+import org.springframework.stereotype.Component
 
 
 // Token
@@ -25,6 +26,7 @@ interface TokenService {
 
 // JWT
 
+@Component
 object HasuraJWTService : TokenService {
     private val algorithm = Algorithm.HMAC256("ilovebread")
     private const val hasuraClaimName = "https://hasura.io/jwt/claims"

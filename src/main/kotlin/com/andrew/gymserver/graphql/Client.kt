@@ -1,16 +1,10 @@
 package com.andrew.gymserver.graphql
 
 import com.andrew.gymserver.utils.pipe
-import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Response
-import com.apollographql.apollo.exception.ApolloException
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
-import okhttp3.Response as OkhttpResponse
+import okhttp3.Response
 
 object Client {
     fun create(): ApolloClient =
@@ -26,22 +20,10 @@ object Client {
             .addInterceptor(this::addHeaders)
             .build()
 
-    private fun addHeaders(chain: Interceptor.Chain): OkhttpResponse =
+    private fun addHeaders(chain: Interceptor.Chain): Response =
         chain.request()
             .pipe { it.newBuilder().method(it.method(), it.body()) }
             .pipe { it.header("x-hasura-admin-secret", "ilovebread") }
             .pipe { chain.proceed(it.build()) }
 }
 
-suspend fun <T> ApolloCall<T>.execute() =
-    suspendCoroutine<Response<T>> { cont ->
-        enqueue(object : ApolloCall.Callback<T>() {
-            override fun onFailure(e: ApolloException) {
-                cont.resumeWithException(e)
-            }
-
-            override fun onResponse(response: Response<T>) {
-                cont.resume(response)
-            }
-        })
-    }
