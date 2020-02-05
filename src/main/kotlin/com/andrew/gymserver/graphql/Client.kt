@@ -1,6 +1,6 @@
 package com.andrew.gymserver.graphql
 
-import com.andrew.gymserver.utils.pipe
+import arrow.syntax.function.pipe
 import com.apollographql.apollo.ApolloClient
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

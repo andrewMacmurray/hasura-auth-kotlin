@@ -1,30 +1,30 @@
 package com.andrew.gymserver
 
-import com.andrew.gymserver.utils.Result
+import arrow.core.Either
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 
-fun <Ok, Err> assertOnOkValue(
-    result: Result<Ok, Err>,
-    assertWhenOk: (Ok) -> Unit
+fun <Left, Right> assertOnOkValue(
+    either: Either<Left, Right>,
+    assertWhenOk: (Right) -> Unit
 ) {
-    when (result) {
-        is Result.Ok -> assertWhenOk(result.value)
-        is Result.Error -> Assertions.fail("${result.error} is not Ok")
+    when (either) {
+        is Either.Right -> assertWhenOk(either.b)
+        is Either.Left -> Assertions.fail("${either.a} is not Ok")
     }
 }
 
-fun <Ok, Err> assertIsOk(result: Result<Ok, Err>) {
-    when (result) {
-        is Result.Ok -> pass()
-        is Result.Error -> Assertions.fail("${result.error} is not Ok")
+fun <Left, Right> assertIsOk(either: Either<Left, Right>) {
+    when (either) {
+        is Either.Right -> pass()
+        is Either.Left -> Assertions.fail("${either.a} is not Ok")
     }
 }
 
-fun <Ok, Err> assertIsError(result: Result<Ok, Err>) {
-    when (result) {
-        is Result.Ok -> Assertions.fail("${result.value} should be an Error")
-        is Result.Error -> pass()
+fun <Left, Right> assertIsError(either: Either<Left, Right>) {
+    when (either) {
+        is Either.Right -> Assertions.fail("${either.b} should be an Error")
+        is Either.Left -> pass()
     }
 }
 

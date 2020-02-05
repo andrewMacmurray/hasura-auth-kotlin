@@ -4,6 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**
 !**/src/test/**
+/out
 
 ### STS ###
 .apt_generated
@@ -19,14 +20,8 @@ build/
 *.iws
 *.iml
 *.ipr
-out/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# Graphql
 
-### VS Code ###
-.vscode/
+src/main/graphql/schema.json
+

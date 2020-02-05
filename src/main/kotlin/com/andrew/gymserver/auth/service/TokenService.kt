@@ -1,10 +1,11 @@
-package com.andrew.gymserver.auth
+package com.andrew.gymserver.auth.service
 
-import com.andrew.gymserver.auth.TokenError.CreationError
-import com.andrew.gymserver.auth.TokenError.DecodeError
-import com.andrew.gymserver.utils.Result
-import com.andrew.gymserver.utils.Result.Ok
-import com.andrew.gymserver.utils.pipe
+import arrow.core.Either
+import arrow.core.Either.Companion.left
+import arrow.core.Either.Companion.right
+import arrow.syntax.function.pipe
+import com.andrew.gymserver.auth.service.TokenError.CreationError
+import com.andrew.gymserver.auth.service.TokenError.DecodeError
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTCreationException
@@ -20,8 +21,8 @@ data class Token(val token: String)
 // Token Generator
 
 interface TokenService {
-    fun generate(userDetails: UserDetails): Result<Token, TokenError>
-    fun decode(token: Token): Result<DecodedJWT, TokenError>
+    fun generate(userDetails: UserDetails): Either<TokenError, Token>
+    fun decode(token: Token): Either<TokenError, DecodedJWT>
 }
 
 // JWT
@@ -31,20 +32,20 @@ object HasuraJWTService : TokenService {
     private val algorithm = Algorithm.HMAC256("ilovebread")
     private const val hasuraClaimName = "https://hasura.io/jwt/claims"
 
-    override fun generate(userDetails: UserDetails): Result<Token, TokenError> = try {
+    override fun generate(userDetails: UserDetails): Either<TokenError, Token> = try {
         createToken(userDetails)
     } catch (e: JWTCreationException) {
-        Result.Error(CreationError)
+        left(CreationError)
     }
 
-    private fun createToken(userDetails: UserDetails): Result<Token, TokenError> =
+    private fun createToken(userDetails: UserDetails): Either<TokenError, Token> =
         JWT.create()
             .withClaim("username", userDetails.username)
             .withClaim("email", userDetails.email)
             .withClaim(hasuraClaimName, toHasuraClaims(userDetails))
             .sign(algorithm)
             .pipe(::Token)
-            .pipe(::Ok)
+            .pipe(::right)
 
     private fun toHasuraClaims(userDetails: UserDetails): String {
         return """
@@ -56,10 +57,10 @@ object HasuraJWTService : TokenService {
         """.trimIndent()
     }
 
-    override fun decode(token: Token): Result<DecodedJWT, TokenError> = try {
-        JWT.decode(token.token).pipe(::Ok)
+    override fun decode(token: Token): Either<TokenError, DecodedJWT> = try {
+        JWT.decode(token.token).pipe(::right)
     } catch (e: JWTDecodeException) {
-        Result.Error(DecodeError)
+        left(DecodeError)
     }
 }
 
@@ -68,4 +69,9 @@ object HasuraJWTService : TokenService {
 sealed class TokenError {
     object CreationError : TokenError()
     object DecodeError : TokenError()
+}
+
+fun TokenError.message(): String = when (this) {
+    CreationError -> "Error creating token"
+    DecodeError -> "Error decoding token"
 }

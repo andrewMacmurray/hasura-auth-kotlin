@@ -28,6 +28,7 @@ dependencies {
 //    implementation("com.graphql-java:graphiql-spring-boot-starter:5.0.2")
 //    implementation("com.graphql-java:graphql-java-tools:5.2.4")
     implementation("io.arrow-kt:arrow-fx:$arrowVersion")
+    implementation("io.arrow-kt:arrow-mtl:$arrowVersion")
     implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
     kapt("io.arrow-kt:arrow-meta:$arrowVersion")
     implementation("org.springframework.boot:spring-boot-starter-webflux")

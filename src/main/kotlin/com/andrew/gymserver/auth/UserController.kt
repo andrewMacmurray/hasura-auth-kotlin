@@ -1,55 +1,34 @@
 package com.andrew.gymserver.auth
 
-import FindUserQuery
-import arrow.Kind
-import arrow.fx.ForIO
-import arrow.fx.extensions.io.unsafeRun.runBlocking
-import arrow.unsafe
-import com.andrew.gymserver.utils.Result
+import com.andrew.gymserver.auth.service.AuthService
+import com.andrew.gymserver.auth.service.BCryptService
+import com.andrew.gymserver.auth.service.GraphQLUsers
+import com.andrew.gymserver.auth.service.HasuraJWTService
+import com.andrew.gymserver.auth.service.Token
+import com.andrew.gymserver.toResponse
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class UserController(@Autowired val services: Services) {
-
-    @GetMapping("/do-something")
-    suspend fun doSomething(): FindUserQuery.User? {
-        return getAUser()
-    }
+class UserController(@Autowired val service: Service) {
 
     @PostMapping("/create-user")
-    fun createUser(@RequestBody signUpRequest: SignUpRequest): ResponseEntity<Token> =
-        signUpUser(signUpRequest).toResponse()
-
-    private fun signUpUser(signUpRequest: SignUpRequest) =
-        Workflow.execute { services.users().signUp(signUpRequest) }
-}
-
-object Workflow {
-    fun <T> execute(workflow: () -> Kind<ForIO, T>): T =
-        unsafe { runBlocking { workflow() } }
-}
-
-private fun <Ok, Err> Result<Ok, Err>.toResponse(): ResponseEntity<Ok> {
-    return when (this) {
-        is Result.Ok -> ResponseEntity(this.value, HttpStatus.OK)
-        is Result.Error -> ResponseEntity.badRequest().build()
-    }
+    suspend fun createUser(@RequestBody signUpRequest: SignUpRequest): Token =
+        service.auth()
+            .signUp(signUpRequest)
+            .toResponse()
 }
 
 @Component
-class Services(
+class Service(
     @Autowired private val passwordService: BCryptService,
     @Autowired private val tokenService: HasuraJWTService,
     @Autowired private val usersRepository: GraphQLUsers
 ) {
-    fun users() = UserService(
+    fun auth() = AuthService(
         passwordService,
         tokenService,
         usersRepository

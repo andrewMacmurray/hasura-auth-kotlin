@@ -1,7 +1,9 @@
 package com.andrew.gymserver.auth
 
+import arrow.core.flatMap
 import com.andrew.gymserver.assertOnOkValue
-import com.andrew.gymserver.utils.andThen
+import com.andrew.gymserver.auth.service.HasuraJWTService
+import com.andrew.gymserver.auth.service.UserDetails
 import com.auth0.jwt.interfaces.DecodedJWT
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -16,7 +18,7 @@ class TokenServiceTest {
         val details = userDetails()
         val token = tokenService
             .generate(details)
-            .andThen { tokenService.decode(it) }
+            .flatMap(tokenService::decode)
 
         assertOnOkValue(token) {
             assertEquals(details.username, claimValueFor("username", it))
@@ -29,7 +31,7 @@ class TokenServiceTest {
         val details = userDetails()
         val token = tokenService
             .generate(details)
-            .andThen { tokenService.decode(it) }
+            .flatMap(tokenService::decode)
 
         assertOnOkValue(token) {
             val hasuraClaimName = "https://hasura.io/jwt/claims"
@@ -44,9 +46,10 @@ class TokenServiceTest {
     private fun claimValueFor(claimName: String, jwt: DecodedJWT) =
         jwt.getClaim(claimName).asString()
 
-    private fun userDetails() = UserDetails(
-        id = 1,
-        username = "andrew",
-        email = "a@b.com"
-    )
+    private fun userDetails() =
+        UserDetails(
+            id = 1,
+            username = "andrew",
+            email = "a@b.com"
+        )
 }
