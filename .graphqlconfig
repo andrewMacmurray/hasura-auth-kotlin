@@ -5,9 +5,6 @@
     "endpoints": {
       "Default GraphQL Endpoint": {
         "url": "http://localhost:8080/v1/graphql",
-        "headers": {
-          "x-hasura-admin-secret": "ilovebread"
-        },
         "introspect": true
       }
     }

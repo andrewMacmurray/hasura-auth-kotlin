@@ -1,35 +1,33 @@
-package com.andrew.gymserver.auth
+package com.andrew.gymserver.auth.service
 
-import com.andrew.gymserver.auth.PasswordError.InvalidPassword
-import com.andrew.gymserver.auth.PasswordError.PasswordCreationError
-import com.andrew.gymserver.utils.Result
-import com.andrew.gymserver.utils.nullableToResult
+import arrow.core.Either
+import arrow.core.Either.Companion.left
+import arrow.core.Either.Companion.right
+import com.andrew.gymserver.auth.service.PasswordError.InvalidPassword
+import com.andrew.gymserver.auth.service.PasswordError.PasswordCreationError
+import com.andrew.gymserver.utils.nullableToEither
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.stereotype.Component
 
 // PasswordService
 
-
 interface PasswordService {
-    fun hash(password: String): Result<String, PasswordError>
-    fun verify(password: String, hash: String): Result<Unit, PasswordError>
+    fun hash(password: String): Either<PasswordError, String>
+    fun verify(password: String, hash: String): Either<PasswordError, Unit>
 }
 
 // BCrypt Service
 
 @Component
 object BCryptService : PasswordService {
-    override fun hash(password: String): Result<String, PasswordError> =
+    override fun hash(password: String): Either<PasswordError, String> =
         if (password.meetsCriteria())
-            hashWithSalt(password).nullableToResult(PasswordCreationError)
+            hashWithSalt(password).nullableToEither(PasswordCreationError)
         else
-            Result.Error(PasswordCreationError)
+            left(PasswordCreationError)
 
-    override fun verify(password: String, hash: String): Result<Unit, PasswordError> =
-        if (password.matchesHash(hash))
-            Result.Ok(Unit)
-        else
-            Result.Error(InvalidPassword)
+    override fun verify(password: String, hash: String): Either<PasswordError, Unit> =
+        if (password.matchesHash(hash)) right(Unit) else left(InvalidPassword)
 
     private fun hashWithSalt(password: String): String? =
         BCrypt.hashpw(password, BCrypt.gensalt())

@@ -1,20 +1,26 @@
 package com.andrew.gymserver.graphql
 
-import com.andrew.gymserver.utils.pipe
+import arrow.syntax.function.pipe
 import com.apollographql.apollo.ApolloClient
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 
-object Client {
-    fun create(): ApolloClient =
+@Component
+class ClientBuilder(
+    @Value("\${hasura.server_url}") val serverUrl: String,
+    @Value("\${hasura.admin_secret}") val adminSecret: String
+) {
+    fun build(): ApolloClient =
         ApolloClient
             .builder()
-            .serverUrl("http://localhost:8080/v1/graphql")
-            .okHttpClient(okHttpClient)
+            .serverUrl(serverUrl)
+            .okHttpClient(buildOkHttpClient())
             .build()
 
-    private val okHttpClient =
+    private fun buildOkHttpClient() =
         OkHttpClient
             .Builder()
             .addInterceptor(this::addHeaders)
@@ -23,7 +29,7 @@ object Client {
     private fun addHeaders(chain: Interceptor.Chain): Response =
         chain.request()
             .pipe { it.newBuilder().method(it.method(), it.body()) }
-            .pipe { it.header("x-hasura-admin-secret", "ilovebread") }
+            .pipe { it.header("x-hasura-admin-secret", adminSecret) }
             .pipe { chain.proceed(it.build()) }
 }
 

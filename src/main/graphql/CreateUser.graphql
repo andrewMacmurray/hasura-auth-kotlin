@@ -17,7 +17,8 @@ mutation CreateUser(
         returning {
             id,
             username,
-            email
+            email,
+            password_hash
         }
     }
 }
