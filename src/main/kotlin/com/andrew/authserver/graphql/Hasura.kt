@@ -1,4 +1,4 @@
-package com.andrew.gymserver.graphql
+package com.andrew.authserver.graphql
 
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.ApolloClient

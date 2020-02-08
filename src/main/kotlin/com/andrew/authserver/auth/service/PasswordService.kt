@@ -1,11 +1,11 @@
-package com.andrew.gymserver.auth.service
+package com.andrew.authserver.auth.service
 
 import arrow.core.Either
 import arrow.core.Either.Companion.left
 import arrow.core.Either.Companion.right
-import com.andrew.gymserver.auth.service.PasswordError.InvalidPassword
-import com.andrew.gymserver.auth.service.PasswordError.PasswordCreationError
-import com.andrew.gymserver.utils.nullableToEither
+import com.andrew.authserver.auth.service.PasswordError.InvalidPassword
+import com.andrew.authserver.auth.service.PasswordError.PasswordCreationError
+import com.andrew.authserver.utils.nullableToEither
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.stereotype.Component
 

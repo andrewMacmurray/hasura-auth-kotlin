@@ -1,4 +1,4 @@
-package com.andrew.gymserver
+package com.andrew.authserver
 
 import arrow.core.Either
 import org.springframework.http.HttpStatus

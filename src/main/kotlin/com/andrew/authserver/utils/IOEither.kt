@@ -1,4 +1,4 @@
-package com.andrew.gymserver.utils
+package com.andrew.authserver.utils
 
 import arrow.core.Either
 import arrow.core.Either.Companion.right

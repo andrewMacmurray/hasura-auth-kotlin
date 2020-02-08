@@ -1,15 +1,15 @@
-package com.andrew.gymserver.auth.service
+package com.andrew.authserver.auth.service
 
 import CreateUserMutation
 import FindUserQuery
 import arrow.syntax.function.pipe
-import com.andrew.gymserver.auth.service.UsersError.DuplicateUsersError
-import com.andrew.gymserver.auth.service.UsersError.NetworkError
-import com.andrew.gymserver.auth.service.UsersError.UserNotFoundError
-import com.andrew.gymserver.graphql.Hasura
-import com.andrew.gymserver.utils.IOEither
-import com.andrew.gymserver.utils.captureIO
-import com.andrew.gymserver.utils.onException
+import com.andrew.authserver.auth.service.UsersError.DuplicateUsersError
+import com.andrew.authserver.auth.service.UsersError.NetworkError
+import com.andrew.authserver.auth.service.UsersError.UserNotFoundError
+import com.andrew.authserver.graphql.Hasura
+import com.andrew.authserver.utils.IOEither
+import com.andrew.authserver.utils.captureIO
+import com.andrew.authserver.utils.onException
 import com.apollographql.apollo.exception.ApolloNetworkException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

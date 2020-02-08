@@ -1,9 +1,9 @@
-package com.andrew.gymserver.auth
+package com.andrew.authserver.auth
 
 import arrow.syntax.function.pipe
-import com.andrew.gymserver.assertIsError
-import com.andrew.gymserver.assertIsOk
-import com.andrew.gymserver.auth.service.BCryptService
+import com.andrew.authserver.assertIsError
+import com.andrew.authserver.assertIsOk
+import com.andrew.authserver.auth.service.BCryptService
 import org.junit.jupiter.api.Test
 
 class PasswordServiceTest {

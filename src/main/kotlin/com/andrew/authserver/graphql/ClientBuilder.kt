@@ -1,4 +1,4 @@
-package com.andrew.gymserver.graphql
+package com.andrew.authserver.graphql
 
 import arrow.syntax.function.pipe
 import com.apollographql.apollo.ApolloClient

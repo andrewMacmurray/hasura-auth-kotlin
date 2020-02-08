@@ -1,11 +1,11 @@
-package com.andrew.gymserver.auth.service
+package com.andrew.authserver.auth.service
 
 import arrow.core.Either
 import arrow.core.Either.Companion.left
 import arrow.core.Either.Companion.right
 import arrow.syntax.function.pipe
-import com.andrew.gymserver.auth.service.TokenError.CreationError
-import com.andrew.gymserver.auth.service.TokenError.DecodeError
+import com.andrew.authserver.auth.service.TokenError.CreationError
+import com.andrew.authserver.auth.service.TokenError.DecodeError
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTCreationException

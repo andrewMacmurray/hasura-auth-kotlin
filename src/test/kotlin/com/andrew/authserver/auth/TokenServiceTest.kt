@@ -1,9 +1,9 @@
-package com.andrew.gymserver.auth
+package com.andrew.authserver.auth
 
 import arrow.core.flatMap
-import com.andrew.gymserver.assertOnOkValue
-import com.andrew.gymserver.auth.service.HasuraJWTService
-import com.andrew.gymserver.auth.service.UserDetails
+import com.andrew.authserver.assertOnOkValue
+import com.andrew.authserver.auth.service.HasuraJWTService
+import com.andrew.authserver.auth.service.UserDetails
 import com.auth0.jwt.interfaces.DecodedJWT
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

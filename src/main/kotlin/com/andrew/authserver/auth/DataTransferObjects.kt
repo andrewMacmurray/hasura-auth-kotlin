@@ -1,4 +1,4 @@
-package com.andrew.gymserver.auth
+package com.andrew.authserver.auth
 
 data class SignUpRequest(
     val username: String,

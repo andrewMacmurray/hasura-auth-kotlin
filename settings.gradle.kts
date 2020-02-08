@@ -1,1 +1,1 @@
-rootProject.name = "gym-server"
+rootProject.name = "auth-server"

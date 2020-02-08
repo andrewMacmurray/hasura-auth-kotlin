@@ -1,8 +1,7 @@
-package com.andrew.gymserver.auth
+package com.andrew.authserver.auth
 
-import com.andrew.gymserver.auth.service.AuthService
-import com.andrew.gymserver.auth.service.Token
-import com.andrew.gymserver.toResponse
+import com.andrew.authserver.auth.service.Token
+import com.andrew.authserver.toResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

@@ -1,4 +1,4 @@
-package com.andrew.gymserver
+package com.andrew.authserver
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

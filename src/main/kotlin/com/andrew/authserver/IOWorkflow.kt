@@ -1,4 +1,4 @@
-package com.andrew.gymserver
+package com.andrew.authserver
 
 import arrow.Kind
 import arrow.fx.ForIO
