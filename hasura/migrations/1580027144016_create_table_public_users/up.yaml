@@ -1,0 +1,9 @@
+- args:
+    sql: CREATE TABLE "public"."users"("id" serial NOT NULL, "first_name" text NOT
+      NULL, "second_name" text NOT NULL, "email" text NOT NULL, "username" text NOT
+      NULL, PRIMARY KEY ("id") , UNIQUE ("email"), UNIQUE ("username"));
+  type: run_sql
+- args:
+    name: users
+    schema: public
+  type: add_existing_table_or_view

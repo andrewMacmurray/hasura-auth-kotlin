@@ -1,0 +1,11 @@
+- args:
+    sql: CREATE TABLE "public"."user_sessions"("id" serial NOT NULL, "user_id" integer
+      NOT NULL, "session_id" integer NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("session_id")
+      REFERENCES "public"."sessions"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN
+      KEY ("user_id") REFERENCES "public"."users"("id") ON UPDATE cascade ON DELETE
+      cascade, UNIQUE ("user_id", "session_id"));
+  type: run_sql
+- args:
+    name: user_sessions
+    schema: public
+  type: add_existing_table_or_view

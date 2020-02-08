@@ -1,0 +1,7 @@
+- args:
+    name: user_sessions
+    new_name: session_users
+    table:
+      name: sessions
+      schema: public
+  type: rename_relationship

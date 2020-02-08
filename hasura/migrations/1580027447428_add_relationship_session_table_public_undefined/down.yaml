@@ -1,0 +1,6 @@
+- args:
+    relationship: session
+    table:
+      name: user_sessions
+      schema: public
+  type: drop_relationship

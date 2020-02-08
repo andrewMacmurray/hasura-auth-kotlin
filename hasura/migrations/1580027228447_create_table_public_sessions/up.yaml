@@ -1,0 +1,8 @@
+- args:
+    sql: CREATE TABLE "public"."sessions"("id" serial NOT NULL, "started_at" timestamptz
+      NOT NULL DEFAULT now(), "finished_at" timestamptz, PRIMARY KEY ("id") );
+  type: run_sql
+- args:
+    name: sessions
+    schema: public
+  type: add_existing_table_or_view
