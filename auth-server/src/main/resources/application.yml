@@ -2,7 +2,17 @@ server:
   port: 9090
 
 hasura:
-  server_url: http://localhost:8080/v1/graphql
+  server_url: ${HASURA_SERVER_URL}
   admin_secret: ${HASURA_ADMIN_SECRET}
   jwt_secret: ${HASURA_JWT_SECRET}
   claim_namespace: https://hasura.io/jwt/claims
+
+---
+
+spring:
+  profiles: local
+
+hasura:
+  server_url: http://localhost:8080/v1/graphql
+  admin_secret: ilovebread
+  jwt_secret: ilovebread

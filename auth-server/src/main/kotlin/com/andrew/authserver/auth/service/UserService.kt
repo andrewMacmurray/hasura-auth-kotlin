@@ -3,9 +3,9 @@ package com.andrew.authserver.auth.service
 import CreateUserMutation
 import FindUserQuery
 import arrow.syntax.function.pipe
-import com.andrew.authserver.auth.service.UsersError.DuplicateUsersError
-import com.andrew.authserver.auth.service.UsersError.NetworkError
-import com.andrew.authserver.auth.service.UsersError.UserNotFoundError
+import com.andrew.authserver.auth.service.UsersServiceError.DuplicateUsersError
+import com.andrew.authserver.auth.service.UsersServiceError.NetworkError
+import com.andrew.authserver.auth.service.UsersServiceError.UserNotFoundError
 import com.andrew.authserver.graphql.Hasura
 import com.andrew.authserver.utils.IOEither
 import com.andrew.authserver.utils.captureIO
@@ -36,8 +36,8 @@ data class UserDetails(
 // Users Service
 
 interface UserService {
-    fun create(userToCreate: UserToCreate): IOEither<UsersError, UserDetails>
-    fun find(userName: String): IOEither<UsersError, UserDetails>
+    fun create(userToCreate: UserToCreate): IOEither<UsersServiceError, UserDetails>
+    fun find(userName: String): IOEither<UsersServiceError, UserDetails>
 }
 
 // GraphQL Users
@@ -45,20 +45,20 @@ interface UserService {
 @Component
 class GraphQLUsers(@Autowired val hasura: Hasura) : UserService {
 
-    override fun create(userToCreate: UserToCreate): IOEither<UsersError, UserDetails> =
+    override fun create(userToCreate: UserToCreate): IOEither<UsersServiceError, UserDetails> =
         createAUser(userToCreate).onHasuraError(DuplicateUsersError)
 
-    override fun find(userName: String): IOEither<UsersError, UserDetails> =
+    override fun find(userName: String): IOEither<UsersServiceError, UserDetails> =
         findUser(userName).onHasuraError(UserNotFoundError)
 
-    private fun findUser(userName: String): IOEither<UsersError, UserDetails> = captureIO {
+    private fun findUser(userName: String): IOEither<UsersServiceError, UserDetails> = captureIO {
         findUserQuery(userName)
             .pipe { hasura.query(it) }!!
             .users[0]
             .pipe(::userDetails)
     }
 
-    private fun createAUser(user: UserToCreate): IOEither<UsersError, UserDetails> = captureIO {
+    private fun createAUser(user: UserToCreate): IOEither<UsersServiceError, UserDetails> = captureIO {
         createUserMutation(user)
             .pipe { hasura.mutate(it) }!!
             .insert_users!!
@@ -94,15 +94,15 @@ private fun createUserMutation(u: UserToCreate) = CreateUserMutation(
 
 // Errors
 
-sealed class UsersError {
-    object DuplicateUsersError : UsersError()
-    object NetworkError : UsersError()
-    object UserNotFoundError : UsersError()
+sealed class UsersServiceError {
+    object DuplicateUsersError : UsersServiceError()
+    object NetworkError : UsersServiceError()
+    object UserNotFoundError : UsersServiceError()
 }
 
 // Utils
 
-private fun <T> IOEither<UsersError, T>.onHasuraError(err: UsersError): IOEither<UsersError, T> =
+private fun <T> IOEither<UsersServiceError, T>.onHasuraError(err: UsersServiceError): IOEither<UsersServiceError, T> =
     this.onException { exception ->
         when (exception) {
             is ApolloNetworkException -> NetworkError

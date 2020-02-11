@@ -3,8 +3,8 @@ package com.andrew.authserver.auth.service
 import arrow.core.Either
 import arrow.core.Either.Companion.left
 import arrow.core.Either.Companion.right
-import com.andrew.authserver.auth.service.PasswordError.InvalidPassword
-import com.andrew.authserver.auth.service.PasswordError.PasswordCreationError
+import com.andrew.authserver.auth.service.PasswordServiceError.InvalidPassword
+import com.andrew.authserver.auth.service.PasswordServiceError.PasswordCreationError
 import com.andrew.authserver.utils.nullableToEither
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.stereotype.Component
@@ -12,21 +12,21 @@ import org.springframework.stereotype.Component
 // PasswordService
 
 interface PasswordService {
-    fun hash(password: String): Either<PasswordError, String>
-    fun verify(password: String, hash: String): Either<PasswordError, Unit>
+    fun hash(password: String): Either<PasswordServiceError, String>
+    fun verify(password: String, hash: String): Either<PasswordServiceError, Unit>
 }
 
 // BCrypt Service
 
 @Component
 object BCryptService : PasswordService {
-    override fun hash(password: String): Either<PasswordError, String> =
+    override fun hash(password: String): Either<PasswordServiceError, String> =
         if (password.meetsCriteria())
             hashWithSalt(password).nullableToEither(PasswordCreationError)
         else
             left(PasswordCreationError)
 
-    override fun verify(password: String, hash: String): Either<PasswordError, Unit> =
+    override fun verify(password: String, hash: String): Either<PasswordServiceError, Unit> =
         if (password.matchesHash(hash)) right(Unit) else left(InvalidPassword)
 
     private fun hashWithSalt(password: String): String? =
@@ -51,7 +51,7 @@ private object PasswordCriteria {
 
 // Errors
 
-sealed class PasswordError {
-    object InvalidPassword : PasswordError()
-    object PasswordCreationError : PasswordError()
+sealed class PasswordServiceError {
+    object InvalidPassword : PasswordServiceError()
+    object PasswordCreationError : PasswordServiceError()
 }

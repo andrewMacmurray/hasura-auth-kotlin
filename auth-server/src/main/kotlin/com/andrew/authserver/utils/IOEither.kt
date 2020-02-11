@@ -21,8 +21,8 @@ fun <Left, RightA, RightB> IOEither<Left, RightA>.flatMap(f: (RightA) -> IOEithe
 fun <LeftA, LeftB, Right> IOEither<LeftA, Right>.mapLeft(f: (LeftA) -> LeftB) =
     this.mapLeft(IO.functor(), f)
 
-fun <Left, Right> liftEither(either: Either<Left, Right>): IOEither<Left, Right> =
-    EitherT.fromEither(IO.applicative(), either)
+fun <Left, Right> Either<Left, Right>.liftEither(): IOEither<Left, Right> =
+    EitherT.fromEither(IO.applicative(), this)
 
 fun <Left, Right> IOEither<Left, Right>.run(): IO<Either<Left, Right>> =
     this.value().fix()

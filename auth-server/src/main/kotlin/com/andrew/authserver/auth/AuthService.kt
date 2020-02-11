@@ -3,18 +3,18 @@ package com.andrew.authserver.auth
 import arrow.core.Either
 import com.andrew.authserver.IOWorkflow
 import com.andrew.authserver.ResponseError
-import com.andrew.authserver.auth.WorkflowError.HashPasswordError
-import com.andrew.authserver.auth.WorkflowError.TokenGenerationError
-import com.andrew.authserver.auth.WorkflowError.UsersErrorMain
-import com.andrew.authserver.auth.service.PasswordError
+import com.andrew.authserver.auth.WorkflowError.PasswordError
+import com.andrew.authserver.auth.WorkflowError.TokenError
+import com.andrew.authserver.auth.WorkflowError.UsersError
 import com.andrew.authserver.auth.service.PasswordService
+import com.andrew.authserver.auth.service.PasswordServiceError
 import com.andrew.authserver.auth.service.Token
-import com.andrew.authserver.auth.service.TokenError
 import com.andrew.authserver.auth.service.TokenService
+import com.andrew.authserver.auth.service.TokenServiceError
 import com.andrew.authserver.auth.service.UserDetails
 import com.andrew.authserver.auth.service.UserService
 import com.andrew.authserver.auth.service.UserToCreate
-import com.andrew.authserver.auth.service.UsersError
+import com.andrew.authserver.auth.service.UsersServiceError
 import com.andrew.authserver.utils.IOEither
 import com.andrew.authserver.utils.flatMap
 import com.andrew.authserver.utils.liftEither
@@ -48,21 +48,21 @@ class AuthService(
             .flatMap { generateToken(it).liftEither() }
 
     private fun hashPassword(password: String): Either<WorkflowError, String> =
-        passwordService.hash(password).mapLeft(::HashPasswordError)
+        passwordService.hash(password).mapLeft(::PasswordError)
 
     private fun generateToken(userDetails: UserDetails): Either<WorkflowError, Token> =
-        tokenService.generate(userDetails).mapLeft(::TokenGenerationError)
+        tokenService.generate(userDetails).mapLeft(::TokenError)
 
     private fun createUser(userToCreate: UserToCreate): IOEither<WorkflowError, UserDetails> =
-        userService.create(userToCreate).mapLeft(::UsersErrorMain)
+        userService.create(userToCreate).mapLeft(::UsersError)
 
     private fun findUser(userName: String): IOEither<WorkflowError, UserDetails> =
-        userService.find(userName).mapLeft(::UsersErrorMain)
+        userService.find(userName).mapLeft(::UsersError)
 
     private fun checkPassword(login: LoginRequest, details: UserDetails): Either<WorkflowError, UserDetails> =
         passwordService
             .verify(login.password, details.passwordHash)
-            .mapLeft(::HashPasswordError)
+            .mapLeft(::PasswordError)
             .map { details }
 }
 
@@ -77,39 +77,36 @@ private fun userToCreate(request: SignUpRequest, passwordHash: String) =
         passwordHash
     )
 
-private fun <Left, Right> Either<Left, Right>.liftEither(): IOEither<Left, Right> =
-    liftEither(this)
-
 // Errors
 
 sealed class WorkflowError : ResponseError {
-    data class HashPasswordError(val e: PasswordError) : WorkflowError()
-    data class UsersErrorMain(val e: UsersError) : WorkflowError()
-    data class TokenGenerationError(val e: TokenError) : WorkflowError()
+    data class PasswordError(val error: PasswordServiceError) : WorkflowError()
+    data class UsersError(val error: UsersServiceError) : WorkflowError()
+    data class TokenError(val error: TokenServiceError) : WorkflowError()
 
     override fun message() = errorMessage(this)
 }
 
-private fun errorMessage(err: WorkflowError): String = when (err) {
-    is HashPasswordError -> passwordErrorMessage(err.e)
-    is UsersErrorMain -> usersErrorMessage(err.e)
-    is TokenGenerationError -> tokenErrorMessage(err.e)
+private fun errorMessage(e: WorkflowError): String = when (e) {
+    is PasswordError -> passwordErrorMessage(e.error)
+    is UsersError -> usersErrorMessage(e.error)
+    is TokenError -> tokenErrorMessage(e.error)
 }
 
-private fun tokenErrorMessage(e: TokenError): String = when (e) {
-    TokenError.CreationError -> "Error creating token"
-    TokenError.DecodeError -> "Error decoding token"
+private fun tokenErrorMessage(e: TokenServiceError): String = when (e) {
+    TokenServiceError.CreationError -> "Error creating token"
+    TokenServiceError.DecodeError -> "Error decoding token"
 }
 
-private fun passwordErrorMessage(e: PasswordError): String = when (e) {
-    PasswordError.InvalidPassword -> invalidLogin
-    PasswordError.PasswordCreationError -> "Error creating password"
+private fun passwordErrorMessage(e: PasswordServiceError): String = when (e) {
+    PasswordServiceError.InvalidPassword -> invalidLogin
+    PasswordServiceError.PasswordCreationError -> "Error creating password"
 }
 
-private fun usersErrorMessage(e: UsersError): String = when (e) {
-    UsersError.DuplicateUsersError -> "User already exists"
-    UsersError.NetworkError -> "Error connecting to users repository"
-    UsersError.UserNotFoundError -> invalidLogin
+private fun usersErrorMessage(e: UsersServiceError): String = when (e) {
+    UsersServiceError.DuplicateUsersError -> "User already exists"
+    UsersServiceError.NetworkError -> "Error connecting to users repository"
+    UsersServiceError.UserNotFoundError -> invalidLogin
 }
 
 private const val invalidLogin = "Invalid Username / Password"

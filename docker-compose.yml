@@ -14,3 +14,12 @@ services:
     restart: always
     env_file:
       - ./hasura/.env.local
+  auth-server:
+    image: auth-server:latest
+    ports:
+      - "9090:9090"
+    depends_on:
+      - "graphql-engine"
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
