@@ -1,4 +1,4 @@
-# Realworld Actions Server
+# Http4k Hasura Actions Server
 
 Http server for hasura actions built using Kotlin + Http4k
 
